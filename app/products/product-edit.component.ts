@@ -41,7 +41,8 @@ export class ProductEditComponent implements OnInit, OnDestroy {
             quantity: [0, [Validators.maxLength(8), Validators.pattern("^(0|[1-9][0-9]*)$")]]
         });
 
-       this.changeAvailability('availability');
+        this.productForm.get('availability').valueChanges
+            .subscribe(value=>this.changeAvailability(value));
 
         // Read the product Id from the route parameter
         this.sub = this.route.params.subscribe(
@@ -87,6 +88,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
             outOfStockReason: product.outOfStockReason,
             quantity: product.quantity
         });
+       
         this.isLoading = false;
         const confirmProductCode= this.productForm.get('codeGroup.confirmProductCode');
         if (product.id === 0) {
