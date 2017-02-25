@@ -10,6 +10,7 @@ import { NumberValidators } from '../shared/number.validator';
 import {  StringValidators } from '../shared/string.validator';
 import { FormUtils } from '../shared/formUtils';
 import 'rxjs/add/operator/do'
+import 'rxjs/add/operator/debounceTime'
 
 @Component({
     templateUrl: 'app/products/product-edit.component.html'
@@ -105,10 +106,13 @@ export class ProductEditComponent implements OnInit, OnDestroy {
      var controlsWithValidations = FormUtils.getValidationControls(this.productForm);
  
       Object.keys(controlsWithValidations).map(key=>{
-            let control = this.productForm.get(key);
+            let control = controlsWithValidations[key];
             if(control){
-                this.productForm.get(key).valueChanges
-                    .subscribe(valueUpdated=>{
+                let changes = control.valueChanges;
+                if(key==="codeGroup"){
+                    changes = changes.debounceTime(700);
+                }
+                changes.subscribe(valueUpdated=>{
                         let ignoreDirtyAndTouch = (key==="outOfStockReason" || key ==="codeGroup");
                         if(control instanceof FormGroup){
                             let hasChildrenError = false;
